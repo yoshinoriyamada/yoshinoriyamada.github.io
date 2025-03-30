@@ -1,4 +1,312 @@
-<!DOCTYPE html>
+document.addEventListener('DOMContentLoaded', function() {
+      // 背景テキスト「方法論の探究」を英語で表現
+      const methodologyTexts = [
+        'EXPLORATION OF METHODOLOGY', 
+        'QUALITATIVE RESEARCH', 
+        'ACTIVE LEARNING', 
+        'EDUCATIONAL PSYCHOLOGY', 
+        'UNIVERSITY EDUCATION', 
+        'LEARNER-CENTERED EDUCATION',
+        'RESEARCH METHODS',
+        'PEDAGOGICAL INNOVATION',
+        'EDUCATIONAL DEVELOPMENT',
+        'TEACHING PHILOSOPHY'
+      ];
+      
+      // 背景テキストを生成する関数
+      function generateBackgroundText(elementId, texts) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+        
+        // コンテナを空にする
+        container.innerHTML = '';
+        
+        // テキストをランダムに配置
+        for (let i = 0; i < 20; i++) {
+          const span = document.createElement('span');
+          const randomIndex = Math.floor(Math.random() * texts.length);
+          span.textContent = texts[randomIndex];
+          
+          // ランダムな透明度
+          const opacity = (Math.random() * 0.02 + 0.01).toFixed(2);
+          span.style.opacity = opacity;
+          
+          // ランダムなサイズ
+          const size = (Math.random() * 2 + 2).toFixed(1);
+          span.style.fontSize = `${size}rem`;
+          
+          // ランダムな回転
+          const rotation = Math.floor(Math.random() * 4 - 2);
+          span.style.transform = `rotate(${rotation}deg)`;
+          
+          container.appendChild(span);
+        }
+      }
+      
+      // 背景画像を生成する関数
+      function generateBackgroundImages(containerId, count) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        // 画像テーマに合わせたプレースホルダー画像URL
+        const imageUrls = [
+          '/api/placeholder/600/400', // 大学キャンパス
+          '/api/placeholder/500/350', // 研究風景
+          '/api/placeholder/450/300', // 教室
+          '/api/placeholder/400/300', // 書籍
+          '/api/placeholder/350/500', // 学生グループ
+          '/api/placeholder/500/400'  // 教育機器
+        ];
+        
+        // 使用済み位置を追跡する配列
+        const usedPositions = [];
+        
+        // 重複チェック関数
+        function checkOverlap(newRect) {
+          for (const rect of usedPositions) {
+            if (
+              newRect.left < rect.right &&
+              newRect.right > rect.left &&
+              newRect.top < rect.bottom &&
+              newRect.bottom > rect.top
+            ) {
+              return true; // 重複あり
+            }
+          }
+          return false; // 重複なし
+        }
+        
+        // 指定された数の画像を生成
+        for (let i = 0; i < count; i++) {
+          const imgDiv = document.createElement('div');
+          imgDiv.className = 'bg-image';
+          
+          // ランダムな画像の選択
+          const randomImgIndex = Math.floor(Math.random() * imageUrls.length);
+          imgDiv.style.backgroundImage = `url('${imageUrls[randomImgIndex]}')`;
+          
+          // ランダムなサイズ（画面の15-30%）
+          const width = Math.floor(Math.random() * 15 + 15);
+          const height = Math.floor(Math.random() * 15 + 15);
+          imgDiv.style.width = `${width}%`;
+          imgDiv.style.height = `${height}%`;
+          
+          // 重複しない位置を探す（最大10回試行）
+          let positionFound = false;
+          let attempts = 0;
+          let newRect;
+          
+          while (!positionFound && attempts < 10) {
+            // ランダムな位置
+            const left = Math.floor(Math.random() * (95 - width));
+            const top = Math.floor(Math.random() * (95 - height));
+            
+            newRect = {
+              left: left,
+              top: top,
+              right: left + width + 5, // マージンを追加
+              bottom: top + height + 5  // マージンを追加
+            };
+            
+            if (!checkOverlap(newRect)) {
+              positionFound = true;
+              usedPositions.push(newRect);
+            }
+            
+            attempts++;
+          }
+          
+          if (positionFound) {
+            imgDiv.style.left = `${newRect.left}%`;
+            imgDiv.style.top = `${newRect.top}%`;
+            container.appendChild(imgDiv);
+          }
+        }
+      }
+      
+      // 各セクションの背景テキストを生成
+      generateBackgroundText('backgroundText', methodologyTexts);
+      generateBackgroundText('backgroundText2', methodologyTexts);
+      generateBackgroundText('backgroundText3', methodologyTexts);
+      generateBackgroundText('backgroundText4', methodologyTexts);
+      
+      // 各セクションの背景画像を生成
+      generateBackgroundImages('heroImageContainer', 4);
+      generateBackgroundImages('profileImageContainer', 4);
+      generateBackgroundImages('researchImageContainer', 4);
+      generateBackgroundImages('publicationsImageContainer', 4);
+
+      // ナビゲーションドットの設定
+      const navDots = document.querySelectorAll('.nav-dot');
+      const sections = document.querySelectorAll('section');
+      
+      // スクロール検出と要素の表示
+      window.addEventListener('scroll', function() {
+        let current = '';
+        
+        sections.forEach((section, index) => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+          
+          if (window.pageYOffset >= sectionTop - sectionHeight / 3) {
+            current = section.getAttribute('id');
+            
+            // コンテンツを表示
+            const content = section.querySelector('.hero-content, .profile-content, .research-content, .publications-content');
+            if (content) {
+              content.classList.add('visible');
+            }
+          }
+        });
+        
+        // アクティブなナビゲーションドットを更新
+        navDots.forEach(dot => {
+          dot.classList.remove('active');
+          const dotIndex = parseInt(dot.getAttribute('data-index'));
+          if (dotIndex === Array.from(sections).findIndex(section => section.getAttribute('id') === current)) {
+            dot.classList.add('active');
+          }
+        });
+      });
+      
+      // ナビゲーションドットのクリックイベント
+      navDots.forEach(dot => {
+        dot.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          window.scrollTo({
+            top: sections[index].offsetTop,
+            behavior: 'smooth'
+          });
+        });
+      });
+      
+      // ページ読み込み時に最初のコンテンツを表示
+      setTimeout(() => {
+        document.querySelector('.hero-content').classList.add('visible');
+      }, 500);
+      
+      // 論文データ
+      const publications = [
+        {
+          title: "卒業研究教育の評価のあり方の検討",
+          authors: "山田 嘉徳, 岩田 貴帆, 西野 毅朗, 土井 義夫, 川上 忠重, 山内 洋, 篠田 雅人, 服部 律子, 佐々木 誠, 串本 剛",
+          journal: "大学教育学会誌 46(2) 116-121",
+          year: "2024",
+          reviewed: true
+        }
+      ];
+      
+      // 論文リストを生成する関数
+      function renderPublications(filteredPubs) {
+        const container = document.querySelector('.publications-list');
+        container.innerHTML = '';
+        
+        if (filteredPubs.length === 0) {
+          container.innerHTML = '<p style="text-align: center; padding: 2rem;">該当する論文が見つかりませんでした。</p>';
+          return;
+        }
+        
+        filteredPubs.forEach(pub => {
+          const item = document.createElement('div');
+          item.className = 'publication-item';
+          
+          const title = document.createElement('h3');
+          title.className = 'publication-title';
+          title.textContent = pub.title;
+          
+          const authors = document.createElement('p');
+          authors.className = 'publication-authors';
+          authors.textContent = pub.authors;
+          
+          const journal = document.createElement('p');
+          journal.className = 'publication-journal';
+          journal.textContent = pub.journal;
+          
+          const meta = document.createElement('div');
+          meta.className = 'publication-meta';
+          
+          const year = document.createElement('span');
+          year.className = 'publication-year';
+          year.textContent = pub.year + '年';
+          
+          meta.appendChild(year);
+          
+          if (pub.reviewed) {
+            const tag = document.createElement('span');
+            tag.className = 'publication-tag';
+            tag.textContent = '査読あり';
+            meta.appendChild(tag);
+          }
+          
+          item.appendChild(title);
+          item.appendChild(authors);
+          item.appendChild(journal);
+          item.appendChild(meta);
+          
+          container.appendChild(item);
+        });
+      }
+      
+      // 初期表示
+      renderPublications(publications);
+      
+      // フィルターボタンのイベントリスナー
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // アクティブクラスの切り替え
+          filterBtns.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          // 検索フィールドの値を取得
+          const searchText = document.querySelector('.search-input').value.toLowerCase();
+          
+          // フィルタリング
+          let filtered = [...publications];
+          
+          // フィルター条件
+          if (this.getAttribute('data-filter') === 'reviewed') {
+            filtered = filtered.filter(pub => pub.reviewed);
+          }
+          
+          // 年代フィルター
+          const yearFilter = this.getAttribute('data-year');
+          if (yearFilter) {
+            if (yearFilter.includes('-')) {
+              const [startYear, endYear] = yearFilter.split('-').map(y => parseInt(y));
+              filtered = filtered.filter(pub => {
+                const pubYear = parseInt(pub.year);
+                return pubYear >= startYear && pubYear <= endYear;
+              });
+            } else {
+              filtered = filtered.filter(pub => pub.year === yearFilter);
+            }
+          }
+          
+          // 検索テキストでフィルタリング
+          if (searchText) {
+            filtered = filtered.filter(pub => 
+              pub.title.toLowerCase().includes(searchText) ||
+              pub.authors.toLowerCase().includes(searchText) ||
+              pub.journal.toLowerCase().includes(searchText)
+            );
+          }
+          
+          // 結果を表示
+          renderPublications(filtered);
+        });
+      });
+      
+      // 検索入力イベントリスナー
+      const searchInput = document.querySelector('.search-input');
+      searchInput.addEventListener('input', function() {
+        // 現在のアクティブフィルターを取得
+        const activeFilter = document.querySelector('.filter-btn.active');
+        
+        // フィルターをトリガー
+        activeFilter.click();
+      });
+    });<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -370,7 +678,147 @@
       box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
     }
 
-    /* フッター */
+    /* 研究業績セクション */
+    .publications-content {
+      max-width: 900px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s ease;
+    }
+
+    .publications-content.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .publications-title {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .filter-container {
+      display: flex;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .filter-btn.active {
+      background: linear-gradient(45deg, #3b82f6, #4f46e5);
+      border-color: transparent;
+    }
+    
+    .search-container {
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      color: white;
+      font-size: 1rem;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+    
+    .publications-list {
+      max-height: 60vh;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    
+    .publications-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .publications-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+    
+    .publications-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+    
+    .publication-item {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .publication-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+    }
+    
+    .publication-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+      color: #fff;
+      font-weight: 500;
+    }
+    
+    .publication-authors {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.9;
+    }
+    
+    .publication-journal {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      font-style: italic;
+      opacity: 0.8;
+    }
+    
+    .publication-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+    
+    .publication-year {
+      color: #3b82f6;
+      font-weight: 500;
+    }
+    
+    .publication-tag {
+      background: rgba(59, 130, 246, 0.2);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      margin-left: 0.5rem;
+    }
     footer {
       padding: 2rem;
       text-align: center;
@@ -454,9 +902,14 @@
     <div class="hero-content">
       <h1 class="hero-title">Yoshinori Yamada Lab.</h1>
       <p class="hero-subtitle">教育心理学・大学教育学を基盤とした学びの探究</p>
+      <div style="background: rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 10px; margin-top: 1rem; margin-bottom: 1.5rem; text-align: left; max-width: 600px;">
+        <h3 style="color: #3b82f6; margin-bottom: 1rem; font-size: 1.2rem; text-align: center;">ようこそ山田嘉徳のウェブサイトへ</h3>
+        <p style="margin-bottom: 0.8rem;">E-mail: yyamada12 at gmail.com（atを@に変えてください）</p>
+        <p style="margin-bottom: 0.5rem;">できるだけメールでご連絡ください。</p>
+        <p>電話でご用件を伝えたい方は、メールでその旨をお送りください。</p>
+      </div>
       <div>
         <a href="#profile" class="btn">プロフィール</a>
-        <a href="#contact" class="btn">お問い合わせ</a>
       </div>
     </div>
   </section>
@@ -520,38 +973,35 @@
       </div>
     </div>
   </section>
-
-  <!-- お問い合わせセクション -->
-  <section id="contact">
+  
+  <!-- 研究業績セクション -->
+  <section id="publications" style="min-height: 100vh; height: auto;">
     <div class="bg-container">
       <div class="gradient-bg"></div>
       <div class="bg-text" id="backgroundText4"></div>
-      <div class="bg-image-container" id="contactImageContainer"></div>
+      <div class="bg-image-container" id="publicationsImageContainer"></div>
     </div>
     <div class="bg-overlay"></div>
-    <div class="contact-content">
-      <h2 class="contact-title">お問い合わせ</h2>
-      <form class="contact-form">
-        <div class="form-group">
-          <input type="text" class="form-input" placeholder="お名前" required>
+    <div class="publications-content">
+      <h2 class="publications-title">研究業績</h2>
+      
+      <div class="publication-item" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 10px; padding: 1.2rem; margin-bottom: 1rem;">
+        <h3 class="publication-title" style="font-size: 1.1rem; margin-bottom: 0.8rem; color: #fff; font-weight: 500;">卒業研究教育の評価のあり方の検討</h3>
+        <p class="publication-authors" style="font-size: 0.9rem; margin-bottom: 0.5rem; opacity: 0.9;">山田 嘉徳, 岩田 貴帆, 西野 毅朗, 土井 義夫, 川上 忠重, 山内 洋, 篠田 雅人, 服部 律子, 佐々木 誠, 串本 剛</p>
+        <p class="publication-journal" style="font-size: 0.9rem; margin-bottom: 0.5rem; font-style: italic; opacity: 0.8;">大学教育学会誌 46(2) 116-121</p>
+        <div class="publication-meta" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; opacity: 0.7;">
+          <span class="publication-year" style="color: #3b82f6; font-weight: 500;">2024年</span>
+          <span class="publication-tag" style="background: rgba(59, 130, 246, 0.2); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem;">査読あり</span>
         </div>
-        <div class="form-group">
-          <input type="email" class="form-input" placeholder="メールアドレス" required>
-        </div>
-        <div class="form-group">
-          <input type="text" class="form-input" placeholder="件名" required>
-        </div>
-        <div class="form-group">
-          <textarea class="form-input" placeholder="メッセージ" required></textarea>
-        </div>
-        <button type="submit" class="submit-btn">送信する</button>
-      </form>
+      </div>
     </div>
   </section>
 
+  <!-- お問い合わせセクションは削除しました -->
+
   <!-- フッター -->
   <footer>
-    <p>&copy; 2025 Yoshinori Yamada Laboratory - 関西大学 教育推進部 教育開発支援センター</p>
+    <p>Copyright &copy; Yoshinori Yamada's Website. All Rights Reserved.</p>
   </footer>
 
   <script>
@@ -685,13 +1135,11 @@
       generateBackgroundText('backgroundText', methodologyTexts);
       generateBackgroundText('backgroundText2', methodologyTexts);
       generateBackgroundText('backgroundText3', methodologyTexts);
-      generateBackgroundText('backgroundText4', methodologyTexts);
       
       // 各セクションの背景画像を生成
       generateBackgroundImages('heroImageContainer', 4);
       generateBackgroundImages('profileImageContainer', 4);
       generateBackgroundImages('researchImageContainer', 4);
-      generateBackgroundImages('contactImageContainer', 4);
 
       // ナビゲーションドットの設定
       const navDots = document.querySelectorAll('.nav-dot');
