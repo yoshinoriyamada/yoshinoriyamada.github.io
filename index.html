@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>山田嘉徳研究室 | 関西大学</title>
+  <style>
+    /* Google Fontsのインポート */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&family=Noto+Sans+JP:wght@100;300;400;500;700&family=Playfair+Display:wght@400;500;600&display=swap');
+    
+    /* ベーススタイル */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', 'Noto Sans JP', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+    }
+
+    body {
+      color: #fff;
+      background-color: #000;
+      overflow-x: hidden;
+    }
+
+    /* セクションの基本スタイル */
+    section {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    /* ナビゲーション */
+    .nav-dots {
+      position: fixed;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .nav-dot.active {
+      background-color: #fff;
+      transform: scale(1.5);
+    }
+
+    /* 背景のスタイル */
+    .bg-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -2;
+    }
+    
+    .gradient-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a2a42, #2c3e50);
+      z-index: -3;
+    }
+    
+    /* 背景テキストスタイル */
+    .bg-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      z-index: -2;
+      overflow: hidden;
+    }
+    
+    .bg-text span {
+      color: rgba(255, 255, 255, 0.03);
+      font-size: 3rem;
+      font-weight: 200;
+      line-height: 1.5;
+      letter-spacing: 0.8rem;
+      padding: 0.5rem;
+      font-family: 'Montserrat', sans-serif;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+    
+    /* 背景画像のスタイル */
+    .bg-image-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .bg-image {
+      position: absolute;
+      background-size: cover;
+      background-position: center;
+      border-radius: 8px;
+      opacity: 0.15;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      transition: all 0.5s ease;
+    }
+    
+    .bg-image:hover {
+      opacity: 0.25;
+      transform: scale(1.05);
+    }
+
+    .bg-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+    }
+
+    /* ヒーローセクション */
+    .hero-content {
+      max-width: 800px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s ease;
+    }
+
+    .hero-content.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 200;
+      line-height: 1.2;
+      letter-spacing: 0.08em;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      opacity: 0.9;
+      letter-spacing: 0.05em;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 1.1rem 2.5rem;
+      background: linear-gradient(45deg, #3b82f6, #4f46e5);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 0.5rem;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    /* プロフィールセクション */
+    .profile-content {
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s ease;
+    }
+
+    .profile-content.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .profile-title {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .info-item {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .info-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .info-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #3b82f6;
+    }
+
+    /* 研究セクション */
+    .research-content {
+      max-width: 800px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s ease;
+    }
+
+    .research-content.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .research-title {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .research-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .research-item {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .research-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+    }
+
+    .research-item-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #3b82f6;
+    }
+
+    /* メールフォームセクション */
+    .contact-content {
+      max-width: 600px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s ease;
+    }
+
+    .contact-content.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .contact-title {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .contact-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .form-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    textarea.form-input {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1.1rem;
+      background: linear-gradient(45deg, #3b82f6, #4f46e5);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    /* フッター */
+    footer {
+      padding: 2rem;
+      text-align: center;
+      background-color: #000;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    /* アニメーション関連 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* レスポンシブデザイン */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1.2rem;
+      }
+      
+      .profile-title,
+      .research-title,
+      .contact-title {
+        font-size: 2rem;
+      }
+      
+      .nav-dots {
+        right: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 2rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+      
+      .btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+      }
+      
+      .profile-title,
+      .research-title,
+      .contact-title {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ナビゲーション -->
+  <div class="nav-dots">
+    <div class="nav-dot active" data-index="0"></div>
+    <div class="nav-dot" data-index="1"></div>
+    <div class="nav-dot" data-index="2"></div>
+    <div class="nav-dot" data-index="3"></div>
+  </div>
+
+  <!-- ヒーローセクション -->
+  <section id="hero">
+    <div class="bg-container">
+      <div class="gradient-bg"></div>
+      <div class="bg-text" id="backgroundText"></div>
+      <div class="bg-image-container" id="heroImageContainer"></div>
+    </div>
+    <div class="bg-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Yoshinori Yamada Lab.</h1>
+      <p class="hero-subtitle">教育心理学・大学教育学を基盤とした学びの探究</p>
+      <div>
+        <a href="#profile" class="btn">プロフィール</a>
+        <a href="#contact" class="btn">お問い合わせ</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- プロフィールセクション -->
+  <section id="profile">
+    <div class="bg-container">
+      <div class="gradient-bg"></div>
+      <div class="bg-text" id="backgroundText2"></div>
+      <div class="bg-image-container" id="profileImageContainer"></div>
+    </div>
+    <div class="bg-overlay"></div>
+    <div class="profile-content">
+      <h2 class="profile-title">プロフィール</h2>
+      <div class="profile-info">
+        <div class="info-item">
+          <h3 class="info-title">基本情報</h3>
+          <p>関西大学 教育推進部教育開発支援センター 准教授</p>
+          <p>博士（心理学）(関西大学)</p>
+        </div>
+        <div class="info-item">
+          <h3 class="info-title">研究分野</h3>
+          <p>人文・社会 / 教育心理学</p>
+          <p>人文・社会 / 大学教育学</p>
+        </div>
+        <div class="info-item">
+          <h3 class="info-title">受賞</h3>
+          <p>2023年 第18回大学教育学会奨励賞</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 研究セクション -->
+  <section id="research">
+    <div class="bg-container">
+      <div class="gradient-bg"></div>
+      <div class="bg-text" id="backgroundText3"></div>
+      <div class="bg-image-container" id="researchImageContainer"></div>
+    </div>
+    <div class="bg-overlay"></div>
+    <div class="research-content">
+      <h2 class="research-title">研究内容</h2>
+      <div class="research-grid">
+        <div class="research-item">
+          <h3 class="research-item-title">学習者中心の教育</h3>
+          <p>授業改善に向かう大学教員の授業観・教育観の解明と、学習者中心の教育実践の推進に関する研究を行っています。</p>
+        </div>
+        <div class="research-item">
+          <h3 class="research-item-title">アクティブラーニング</h3>
+          <p>大学教育におけるアクティブラーニング型授業の効果と、その質を高める要因に関する実証的な研究を行っています。</p>
+        </div>
+        <div class="research-item">
+          <h3 class="research-item-title">卒業研究教育</h3>
+          <p>大学の卒業研究ゼミにおける学びの文化と、卒業研究教育の評価方法に関する研究を行っています。</p>
+        </div>
+        <div class="research-item">
+          <h3 class="research-item-title">質的研究方法</h3>
+          <p>大学教育における質的研究の可能性と方法論の開発に取り組んでいます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- お問い合わせセクション -->
+  <section id="contact">
+    <div class="bg-container">
+      <div class="gradient-bg"></div>
+      <div class="bg-text" id="backgroundText4"></div>
+      <div class="bg-image-container" id="contactImageContainer"></div>
+    </div>
+    <div class="bg-overlay"></div>
+    <div class="contact-content">
+      <h2 class="contact-title">お問い合わせ</h2>
+      <form class="contact-form">
+        <div class="form-group">
+          <input type="text" class="form-input" placeholder="お名前" required>
+        </div>
+        <div class="form-group">
+          <input type="email" class="form-input" placeholder="メールアドレス" required>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-input" placeholder="件名" required>
+        </div>
+        <div class="form-group">
+          <textarea class="form-input" placeholder="メッセージ" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">送信する</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer>
+    <p>&copy; 2025 Yoshinori Yamada Laboratory - 関西大学 教育推進部 教育開発支援センター</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 背景テキスト「方法論の探究」を英語で表現
+      const methodologyTexts = [
+        'EXPLORATION OF METHODOLOGY', 
+        'QUALITATIVE RESEARCH', 
+        'ACTIVE LEARNING', 
+        'EDUCATIONAL PSYCHOLOGY', 
+        'UNIVERSITY EDUCATION', 
+        'LEARNER-CENTERED EDUCATION',
+        'RESEARCH METHODS',
+        'PEDAGOGICAL INNOVATION',
+        'EDUCATIONAL DEVELOPMENT',
+        'TEACHING PHILOSOPHY'
+      ];
+      
+      // 背景テキストを生成する関数
+      function generateBackgroundText(elementId, texts) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+        
+        // コンテナを空にする
+        container.innerHTML = '';
+        
+        // テキストをランダムに配置
+        for (let i = 0; i < 20; i++) {
+          const span = document.createElement('span');
+          const randomIndex = Math.floor(Math.random() * texts.length);
+          span.textContent = texts[randomIndex];
+          
+          // ランダムな透明度
+          const opacity = (Math.random() * 0.02 + 0.01).toFixed(2);
+          span.style.opacity = opacity;
+          
+          // ランダムなサイズ
+          const size = (Math.random() * 2 + 2).toFixed(1);
+          span.style.fontSize = `${size}rem`;
+          
+          // ランダムな回転
+          const rotation = Math.floor(Math.random() * 4 - 2);
+          span.style.transform = `rotate(${rotation}deg)`;
+          
+          container.appendChild(span);
+        }
+      }
+      
+      // 背景画像を生成する関数
+      function generateBackgroundImages(containerId, count) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        // 画像テーマに合わせたプレースホルダー画像URL
+        const imageUrls = [
+          '/api/placeholder/600/400', // 大学キャンパス
+          '/api/placeholder/500/350', // 研究風景
+          '/api/placeholder/450/300', // 教室
+          '/api/placeholder/400/300', // 書籍
+          '/api/placeholder/350/500', // 学生グループ
+          '/api/placeholder/500/400'  // 教育機器
+        ];
+        
+        // 使用済み位置を追跡する配列
+        const usedPositions = [];
+        
+        // 重複チェック関数
+        function checkOverlap(newRect) {
+          for (const rect of usedPositions) {
+            if (
+              newRect.left < rect.right &&
+              newRect.right > rect.left &&
+              newRect.top < rect.bottom &&
+              newRect.bottom > rect.top
+            ) {
+              return true; // 重複あり
+            }
+          }
+          return false; // 重複なし
+        }
+        
+        // 指定された数の画像を生成
+        for (let i = 0; i < count; i++) {
+          const imgDiv = document.createElement('div');
+          imgDiv.className = 'bg-image';
+          
+          // ランダムな画像の選択
+          const randomImgIndex = Math.floor(Math.random() * imageUrls.length);
+          imgDiv.style.backgroundImage = `url('${imageUrls[randomImgIndex]}')`;
+          
+          // ランダムなサイズ（画面の15-30%）
+          const width = Math.floor(Math.random() * 15 + 15);
+          const height = Math.floor(Math.random() * 15 + 15);
+          imgDiv.style.width = `${width}%`;
+          imgDiv.style.height = `${height}%`;
+          
+          // 重複しない位置を探す（最大10回試行）
+          let positionFound = false;
+          let attempts = 0;
+          let newRect;
+          
+          while (!positionFound && attempts < 10) {
+            // ランダムな位置
+            const left = Math.floor(Math.random() * (95 - width));
+            const top = Math.floor(Math.random() * (95 - height));
+            
+            newRect = {
+              left: left,
+              top: top,
+              right: left + width + 5, // マージンを追加
+              bottom: top + height + 5  // マージンを追加
+            };
+            
+            if (!checkOverlap(newRect)) {
+              positionFound = true;
+              usedPositions.push(newRect);
+            }
+            
+            attempts++;
+          }
+          
+          if (positionFound) {
+            imgDiv.style.left = `${newRect.left}%`;
+            imgDiv.style.top = `${newRect.top}%`;
+            container.appendChild(imgDiv);
+          }
+        }
+      }
+      
+      // 各セクションの背景テキストを生成
+      generateBackgroundText('backgroundText', methodologyTexts);
+      generateBackgroundText('backgroundText2', methodologyTexts);
+      generateBackgroundText('backgroundText3', methodologyTexts);
+      generateBackgroundText('backgroundText4', methodologyTexts);
+      
+      // 各セクションの背景画像を生成
+      generateBackgroundImages('heroImageContainer', 4);
+      generateBackgroundImages('profileImageContainer', 4);
+      generateBackgroundImages('researchImageContainer', 4);
+      generateBackgroundImages('contactImageContainer', 4);
+
+      // ナビゲーションドットの設定
+      const navDots = document.querySelectorAll('.nav-dot');
+      const sections = document.querySelectorAll('section');
+      
+      // スクロール検出と要素の表示
+      window.addEventListener('scroll', function() {
+        let current = '';
+        
+        sections.forEach((section, index) => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+          
+          if (window.pageYOffset >= sectionTop - sectionHeight / 3) {
+            current = section.getAttribute('id');
+            
+            // コンテンツを表示
+            const content = section.querySelector('.hero-content, .profile-content, .research-content, .contact-content');
+            if (content) {
+              content.classList.add('visible');
+            }
+          }
+        });
+        
+        // アクティブなナビゲーションドットを更新
+        navDots.forEach(dot => {
+          dot.classList.remove('active');
+          const dotIndex = parseInt(dot.getAttribute('data-index'));
+          if (dotIndex === Array.from(sections).findIndex(section => section.getAttribute('id') === current)) {
+            dot.classList.add('active');
+          }
+        });
+      });
+      
+      // ナビゲーションドットのクリックイベント
+      navDots.forEach(dot => {
+        dot.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          window.scrollTo({
+            top: sections[index].offsetTop,
+            behavior: 'smooth'
+          });
+        });
+      });
+      
+      // ページ読み込み時に最初のコンテンツを表示
+      setTimeout(() => {
+        document.querySelector('.hero-content').classList.add('visible');
+      }, 500);
+    });
+  </script>
+</body>
+</html>
