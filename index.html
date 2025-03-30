@@ -240,48 +240,6 @@
       letter-spacing: 0.05em;
     }
 
-    /* アイコンスタイル */
-    .lab-icon {
-      width: 60px;
-      height: 60px;
-      position: absolute;
-      top: 1.5rem;
-      left: 1.5rem;
-      opacity: 0.9;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-    
-    .lab-icon:hover {
-      transform: rotate(10deg);
-      opacity: 1;
-    }
-    
-    @media (max-width: 768px) {
-      .lab-icon {
-        width: 40px;
-        height: 40px;
-        top: 1rem;
-        left: 1rem;
-      }
-    }
-
-    /* プロフィール写真 */
-    .profile-photo {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-      margin-bottom: 1.5rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .profile-photo:hover {
-      transform: scale(1.05);
-      box-shadow: 0 12px 30px rgba(79, 70, 229, 0.3);
-    }
-
     /* ヒーローセクション */
     .hero-content {
       max-width: 800px;
@@ -654,10 +612,8 @@
       <div class="bg-image-container" id="heroImageContainer"></div>
     </div>
     <div class="bg-overlay"></div>
-    <img src="https://cdn-icons-png.flaticon.com/512/6295/6295417.png" alt="LEAP" class="lab-icon">
     <div class="hero-content">
       <h1 class="hero-title">Yoshinori Yamada Lab.</h1>
-      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=360&h=360&auto=format&fit=crop" alt="山田嘉徳教授" class="profile-photo">
       <p class="hero-subtitle">大学教育における学びと方法論の探究</p>
       <div class="hero-card">
         <h3>ようこそ山田嘉徳のウェブサイトへ</h3>
